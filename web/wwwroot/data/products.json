@@ -1,0 +1,20 @@
+[
+  {
+    "Id": 1,
+    "Name": "Samsung Galaxy S20",
+    "Website":"https://www.mimovrste.com/samsung-galaxy-s20/samsung-galaxy-s20-gsm-telefon-128gb8gb-siv",
+    "ImageUrl": "https://www.mall.cz/i/45803978/2000/2000"
+  },
+  {
+    "Id": 2,
+    "Name": "Acer Nitro 5 AN515-54-59WF",
+    "Website":"https://mimovrste.com/gaming-prenosniki/acer-nitro-5-an515-54-59wf-gaming-prenosnik-crn",
+    "ImageUrl":"https://www.mall.cz/i/47828421/1000/1000"
+  },
+  {
+    "Id": 3,
+    "Name": "HP laserski tiskalnik LaserJet Pro M15w",
+    "Website":"https://www.mimovrste.com/tiskalniki-skenerji/hp-laserski-tiskalnik-laserjet-pro-m15w-w2g51a-",
+    "ImageUrl":"https://www.mall.cz/i/41129800/1000/1000"
+  }
+]

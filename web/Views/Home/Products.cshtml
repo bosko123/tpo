@@ -16,16 +16,20 @@
         </tr>
     </thead>
     <tbody>
+
+    @foreach (var product in ViewBag.productsList)
+    {
         <tr>
             <td>
-                Samsung Galaxy S20
+                @product.Name
             </td>
             <td>
-                <a href="https://www.mimovrste.com/samsung-galaxy-s20/samsung-galaxy-s20-gsm-telefon-128gb8gb-siv">Mimovrste</a>
+                <a href="@product.Website">Mimovrste</a>
             </td>
             <td>
                 <a asp-action="DetailsSamsung">Details</a>
             </td>
         </tr>
+    }
     </tbody>
 </table>

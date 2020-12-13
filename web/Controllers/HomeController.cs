@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using web.Models;
+using web.Services;
 
 namespace web.Controllers
 {
@@ -13,13 +14,26 @@ namespace web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public JsonFileProductService ProductService;
+        public IEnumerable<Product> ProductsList { get; set; }
+
+        public HomeController(ILogger<HomeController> logger, JsonFileProductService productService)
         {
             _logger = logger;
+            ProductService = productService;
+        }
+
+        public void OnGet()
+        {
+            ProductsList = ProductService.GetProducts();
+            Console.WriteLine(ProductsList);
+            ViewBag.P = ProductsList;
         }
 
         public IActionResult Index()
         {
+            ProductsList = ProductService.GetProducts();
+            ViewBag.productsList = ProductsList;
             return View();
         }
 
@@ -30,6 +44,8 @@ namespace web.Controllers
 
         public IActionResult Products()
         {
+            ProductsList = ProductService.GetProducts();
+            ViewBag.productsList = ProductsList;
             return View();
         }
 
