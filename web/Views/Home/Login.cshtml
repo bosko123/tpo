@@ -1,0 +1,39 @@
+@model web.Models.LoginModel;
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-md-4">
+        @using (Html.BeginForm("loginSubmit", "Home", FormMethod.Post))
+        {
+            <h4>Use a your account to log in.</h4>
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label for="Email">E-mail</label>
+                @Html.TextBoxFor(model => model.email, new {@class = "form-control"})
+            </div>
+            <div class="form-group">
+                <label for="Password">Password</label>
+                @Html.TextBoxFor(model => model.password, new {@class = "form-control", type = "password"})
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Log in</button>
+            </div>
+            <div class="form-group">
+                <p>
+                    <a id="forgot-password">Forgot your password?</a>
+                </p>
+                <p>
+                    <a asp-area="" asp-action="Register">Register as a new user</a>
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
