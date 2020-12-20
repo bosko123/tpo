@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Net.Http;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
 
 namespace web.Controllers
 {
@@ -27,6 +28,7 @@ namespace web.Controllers
         {
             _logger = logger;
             ProductService = productService;
+            //HttpContext.Session.SetString("name", null);
         }
 
         public void OnGet()
@@ -45,6 +47,9 @@ namespace web.Controllers
 
                 User user = JsonSerializer.Deserialize<User>(TempData["data"].ToString());
                 TempData["user"] = user.ToString();
+                HttpContext.Session.SetString("name", user.name);
+                HttpContext.Session.SetString("surname", user.surname);
+                HttpContext.Session.SetString("token", user.token);
 
             }
 
@@ -66,6 +71,15 @@ namespace web.Controllers
         public IActionResult DetailsSamsung()
         {
             return View();
+        }
+
+        public IActionResult Logout() {
+
+            HttpContext.Session.Remove("name");
+            HttpContext.Session.Remove("surname");
+            HttpContext.Session.Remove("token");
+            return RedirectToAction("Index");
+
         }
 
         public IActionResult Register()
@@ -182,7 +196,7 @@ namespace web.Controllers
 
             }
 
-            return View("Index", model);
+            return RedirectToAction("Index");
 
         }
 
