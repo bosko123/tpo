@@ -1,8 +1,46 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model IEnumerable<web.Models.Product>;
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Product
+            </th>
+            <th>
+                Price
+            </th>
+            <th><a asp-action="AddProduct">Add product</a></th>
+        </tr>
+    </thead>
+    <tbody>
+    
+    @{
+        var token = HttpContextAccessor.HttpContext.Session.GetString("token");
+        if (token != null) {
+            foreach (var product in Model)
+            {
+                <tr>
+                    <td>
+                        @product.name
+                    </td>
+                    <td>
+                        @product.price
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@product.id">Details</a>
+                    </td>
+                </tr>
+            }
+        }
+    }
+    </tbody>
+</table>
 </div>

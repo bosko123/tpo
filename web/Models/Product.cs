@@ -5,10 +5,10 @@ namespace web.Models {
 
     public class Product {
 
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Website { get; set; }
-        public string ImageUrl { get; set; }
+        public int id { get; set; }
+        public string image { get; set; }
+        public string name { get; set; }
+        public double price { get; set; }
 
         public Product() {
 

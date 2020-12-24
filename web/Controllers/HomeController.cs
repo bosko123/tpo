@@ -20,7 +20,7 @@ namespace web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public JsonFileProductService ProductService;
+        public JsonFileProductService ProductService; 
         public IEnumerable<Product> ProductsList { get; set; }
         public string result;
 
@@ -33,12 +33,10 @@ namespace web.Controllers
 
         public void OnGet()
         {
-            ProductsList = ProductService.GetProducts();
-            Console.WriteLine(ProductsList);
             ViewBag.P = ProductsList;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             ProductsList = ProductService.GetProducts();
             ViewBag.productsList = ProductsList;
@@ -53,6 +51,17 @@ namespace web.Controllers
 
             }
 
+            var token = HttpContext.Session.GetString("token");
+            if (token != null) {
+
+                string result = await sandJsonRequestGet(token, "user_items");
+                Dictionary<string, IEnumerable<Product>> json = JsonSerializer.Deserialize<Dictionary<string, IEnumerable<Product>>>(result);
+                ProductsList = json["Products"];
+
+                return View(ProductsList);
+
+            }
+
             return View();
         }
 
@@ -63,9 +72,21 @@ namespace web.Controllers
 
         public IActionResult Products()
         {
-            ProductsList = ProductService.GetProducts();
-            ViewBag.productsList = ProductsList;
             return View();
+        }
+
+        public IActionResult AddProduct() {
+
+            var token = HttpContext.Session.GetString("token");
+
+            if (token == null) {
+
+                return RedirectToAction("login");
+
+            }
+
+            return View();
+
         }
 
         public IActionResult DetailsSamsung()
@@ -118,7 +139,7 @@ namespace web.Controllers
             return View("Login", model);
         }
 
-        public async Task<string> sandJsonRequest(string Json, string type) {
+        public async Task<string> sandJsonRequestPost(string Json, string type) {
 
             using (var client = new HttpClient())
             {
@@ -130,6 +151,46 @@ namespace web.Controllers
 
                 // method address would be like api/callUber:SomePort for example
                 var result = await client.PostAsync(type, content);
+                string resultContent = await result.Content.ReadAsStringAsync();
+                return resultContent;
+            }
+
+        }
+
+        public async Task<string> sandJsonRequestToken(string Json, string type, string token) {
+
+            using (var client = new HttpClient())
+            {
+                // This would be the like http://www.uber.com
+                client.BaseAddress = new Uri("http://tpo.ski-javornik.si");
+                client.DefaultRequestHeaders.Add("x-access-token", token);
+
+                // serialize your json using newtonsoft json serializer then add it to the StringContent
+                var content = new StringContent(Json, Encoding.UTF8, "application/json");
+
+                // method address would be like api/callUber:SomePort for example
+                var result = await client.PostAsync(type, content);
+                string resultContent = await result.Content.ReadAsStringAsync();
+                return resultContent;
+            }
+
+        }
+
+        public async Task<string> sandJsonRequestGet(string token, string type) {
+
+            using (var client = new HttpClient())
+            {
+                // This would be the like http://www.uber.com
+                var request = new HttpRequestMessage {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri("http://tpo.ski-javornik.si/" + type)
+                    //Content = new StringContent(Json, Encoding.UTF8, "application/json")
+                };
+                request.Headers.Add("x-access-token", token);
+
+                // method address would be like api/callUber:SomePort for example
+                var result = await client.SendAsync(request);
+                //result.EnsureSuccessStatusCode();
                 string resultContent = await result.Content.ReadAsStringAsync();
                 return resultContent;
             }
@@ -164,7 +225,7 @@ namespace web.Controllers
 
                 Console.WriteLine(model.password);
 
-                string result = await sandJsonRequest(model.ToString(), "sign_up");
+                string result = await sandJsonRequestPost(model.ToString(), "sign_up");
 
                 Dictionary<string, string> values = JsonSerializer.Deserialize<Dictionary<string, string>>(result);
 
@@ -201,6 +262,25 @@ namespace web.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> addProductSubmit(AddProductModel model) {
+
+            var token = HttpContext.Session.GetString("token");
+
+            if (token == null) {
+
+                return RedirectToAction("Login");
+
+            }
+
+            string data = model.ToString();
+            string result = await sandJsonRequestToken(data, "add_item", token);
+            Console.WriteLine(result);
+
+            return RedirectToAction("Index");
+
+        }
+
+        [HttpPost]
         public async Task<ActionResult> loginSubmit(LoginModel model) {
 
             if (ModelState.IsValid) {
@@ -208,7 +288,7 @@ namespace web.Controllers
                 var pass = model.password;
 
                 model.password = SHA512(model.password);
-                string result = await sandJsonRequest(model.ToString(), "sign_in");
+                string result = await sandJsonRequestPost(model.ToString(), "sign_in");
 
                 Dictionary<string, string> values = JsonSerializer.Deserialize<Dictionary<string, string>>(result);
 
