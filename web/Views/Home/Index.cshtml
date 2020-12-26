@@ -12,6 +12,9 @@
     <thead>
         <tr>
             <th>
+                Image
+            </th>
+            <th>
                 Product
             </th>
             <th>
@@ -24,10 +27,13 @@
     
     @{
         var token = HttpContextAccessor.HttpContext.Session.GetString("token");
-        if (token != null) {
+        if (token != null && Model != null) {
             foreach (var product in Model)
             {
                 <tr>
+                    <td>
+                        <img src="@product.image" height="50">
+                    </td>
                     <td>
                         @product.name
                     </td>

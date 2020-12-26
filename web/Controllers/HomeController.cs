@@ -38,7 +38,6 @@ namespace web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ProductsList = ProductService.GetProducts();
             ViewBag.productsList = ProductsList;
 
             if (TempData["data"] != null) {
@@ -55,8 +54,15 @@ namespace web.Controllers
             if (token != null) {
 
                 string result = await sandJsonRequestGet(token, "user_items");
-                Dictionary<string, IEnumerable<Product>> json = JsonSerializer.Deserialize<Dictionary<string, IEnumerable<Product>>>(result);
-                ProductsList = json["Products"];
+                Dictionary<string, Object> values = JsonSerializer.Deserialize<Dictionary<string, Object>>(result);
+                
+                if (!values.ContainsKey("Error")) {
+
+                    Console.WriteLine(result);
+                    Dictionary<string, IEnumerable<Product>> json = JsonSerializer.Deserialize<Dictionary<string, IEnumerable<Product>>>(result);
+                    ProductsList = json["Products"];
+
+                }
 
                 return View(ProductsList);
 
@@ -72,6 +78,13 @@ namespace web.Controllers
 
         public IActionResult Products()
         {
+            return View();
+        }
+
+        public IActionResult Details()
+        {
+
+
             return View();
         }
 
