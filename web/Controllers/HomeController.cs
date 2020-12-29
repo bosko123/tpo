@@ -81,11 +81,48 @@ namespace web.Controllers
             return View();
         }
 
-        public IActionResult Details()
+        public async Task<IActionResult> Details(int? id)
         {
+            Dictionary<string, int?> data = new Dictionary<string, int?>();
+            data.Add("id", id);
 
+            string token = HttpContext.Session.GetString("token");
 
-            return View();
+            if (token != null) {
+
+                string json = JsonSerializer.Serialize<Dictionary<string, int?>>(data);
+                string result = await sandJsonRequestToken(json, "product", token);
+
+                ProductDetails productDetails = JsonSerializer.Deserialize<ProductDetails>(result);
+
+                return View(productDetails);
+
+            }
+
+            return RedirectToAction("Index");
+
+        }
+
+        public async Task<IActionResult> Delete(int? id) {
+
+            Dictionary<string, int?> data = new Dictionary<string, int?>();
+            data.Add("id", id);
+
+            string token = HttpContext.Session.GetString("token");
+
+            if (token != null) {
+
+                string json = JsonSerializer.Serialize<Dictionary<string, int?>>(data);
+                string result = await sandJsonRequestToken(json, "remove_product", token);
+
+                Console.WriteLine(result);
+
+                return RedirectToAction("Index");
+
+            }
+
+            return RedirectToAction("Index");
+
         }
 
         public IActionResult AddProduct() {
@@ -100,11 +137,6 @@ namespace web.Controllers
 
             return View();
 
-        }
-
-        public IActionResult DetailsSamsung()
-        {
-            return View();
         }
 
         public IActionResult Logout() {
@@ -235,8 +267,6 @@ namespace web.Controllers
 
                 var pass = model.password;
                 model.password = SHA512(model.password);
-
-                Console.WriteLine(model.password);
 
                 string result = await sandJsonRequestPost(model.ToString(), "sign_up");
 
