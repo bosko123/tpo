@@ -20,7 +20,7 @@
             <th>
                 Price
             </th>
-            <th><a asp-action="AddProduct">Add product</a></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -36,12 +36,12 @@
                     </td>
                     <td>
                         @product.name
+                        <br><a asp-action="Details" asp-route-id="@product.id">Details</a>
                     </td>
                     <td>
-                        @product.price
+                        @product.price€
                     </td>
                     <td>
-                        <a asp-action="Details" asp-route-id="@product.id">Details</a>
                         <a asp-action="RemoveProduct" asp-route-id="@product.id">Remove</a>
                     </td>
                 </tr>
