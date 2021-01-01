@@ -106,24 +106,40 @@ namespace web.Controllers
             return RedirectToAction("Login");
 
         }
+        
+        public async Task<IActionResult> RemoveProduct(int? id) {
 
-        public async Task<IActionResult> Delete(int? id) {
-
-            Dictionary<string, int?> data = new Dictionary<string, int?>();
-            data.Add("id", id);
-
-            string token = HttpContext.Session.GetString("token");
-
+            var token = HttpContext.Session.GetString("token");
             if (token != null) {
 
-                string json = JsonSerializer.Serialize<Dictionary<string, int?>>(data);
-                string result = await sandJsonRequestToken(json, "remove_product", token);
+                string result = await sandJsonRequestGetToken(token, "user_items");
+                
+                Dictionary<string, Object> values = JsonSerializer.Deserialize<Dictionary<string, Object>>(result);
+                Product Product = null;
 
-                return RedirectToAction("Index");
+                if (!values.ContainsKey("Result")/*!values["Result"].Equals("Token is invalid") && !values["Result"].Equals("No products")*/) {
+
+                    Dictionary<string, IEnumerable<Product>> json = JsonSerializer.Deserialize<Dictionary<string, IEnumerable<Product>>>(result);
+                    ProductsList = json["Products"];
+                    
+                    foreach (Product product in ProductsList) {
+                        
+                        if (product.id == id) {
+
+                            Product = product;
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+                return View(Product);
 
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Login");
 
         }
 
@@ -268,6 +284,26 @@ namespace web.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public async Task<ActionResult> RemoveProductSubmit(int? id) {
+
+            Dictionary<string, int?> data = new Dictionary<string, int?>();
+            data.Add("id", id);
+
+            string token = HttpContext.Session.GetString("token");
+
+            if (token != null) {
+
+                string json = JsonSerializer.Serialize<Dictionary<string, int?>>(data);
+                string result = await sandJsonRequestToken(json, "remove_product", token);
+
+                return RedirectToAction("Index");
+
+            }
+
+            return RedirectToAction("Login");
+
         }
 
         [HttpPost]

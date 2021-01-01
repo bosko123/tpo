@@ -1,0 +1,25 @@
+@model web.Models.Product;
+@{
+    ViewData["Title"] = "Remove product";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div class="row">
+    <div class="col-md-4">
+        <h4>Are you sure, you want to remove product?</h4>
+        <h5>@Model.name</h5>
+        <img src="@Model.image" height="250">
+        @using (Html.BeginForm("submitProductSubmit", "Home", FormMethod.Post))
+        {
+            <hr />
+            <div class="form-group">
+                <button class="btn btn-primary" asp-action="RemoveProductSubmit" asp-route-id="@Model.id">Confirm</button>
+                <button class="btn btn-primary" asp-action="Index">Cancel</button>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
