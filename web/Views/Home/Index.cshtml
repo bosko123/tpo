@@ -35,8 +35,7 @@
                         <img src="@product.image" height="50">
                     </td>
                     <td>
-                        @product.name
-                        <br><a asp-action="Details" asp-route-id="@product.id">Details</a>
+                        <br><a asp-action="Details" asp-route-id="@product.id">@product.name</a>
                     </td>
                     <td>
                         @product.price€

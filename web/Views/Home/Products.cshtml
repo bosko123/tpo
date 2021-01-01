@@ -15,8 +15,9 @@
             <th>
                 Product
             </th>
-            <th></th>
-            <th></th>
+            <th>
+                Price
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -28,13 +29,10 @@
                 <img src="@product.image" height="50">
             </td>
             <td>
-                @product.name
+                <a asp-action="Details" asp-route-id="@product.id">@product.name</a>
             </td>
             <td>
                 @product.price
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@product.id">Details</a>
             </td>
         </tr>
     }
