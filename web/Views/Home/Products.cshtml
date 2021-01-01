@@ -1,33 +1,40 @@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model IEnumerable<web.Models.Product>;
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>10 Random Products</h1>
 <table class="table">
     <thead>
         <tr>
             <th>
-                Product
+                Image
             </th>
             <th>
-                Store
+                Product
             </th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 
-    @foreach (var product in ViewBag.productsList)
+    @foreach (var product in Model)
     {
         <tr>
             <td>
-                @product.Name
+                <img src="@product.image" height="50">
             </td>
             <td>
-                <a href="@product.Website">Mimovrste</a>
+                @product.name
             </td>
             <td>
-                <a asp-action="DetailsSamsung">Details</a>
+                @product.price
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@product.id">Details</a>
             </td>
         </tr>
     }

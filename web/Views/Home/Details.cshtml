@@ -1,3 +1,7 @@
+@using System
+@using System.Collections.Generic
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
 @model ProductDetails;
 @{
     ViewData["Title"] = "Details";
@@ -6,23 +10,52 @@
 <h1>Details</h1>
 
 <div>
-    <h4>@Model.ime</h4>
+    <h4>@Model.name</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-5">
-            <img src="@Model.slika" height="200" />
+            <img src="@Model.image" height="200" />
         </dt>
         <dd class = "col-sm-2">
-            <img src="https://i.imgur.com/nyDmCCT.png" height="200" />
+            <div id="curve_chart" style="width: 900px; height: 500px"></div>
         </dd>
         <dt class = "col-sm-10">
-            Trenutna cena: @Model.cena€
+            Trenutna cena: @Model.price€
         </dt>
         <dt class = "col-sm-2">
             
         </dt>
         <dt class = "col-sm-10">
-            <a href="@Model.url" target="_blank">Web store</a>
+            <br><a>Web stores:</a><br>
+            @{
+                Dictionary<string, Dictionary<string, double>> storePrices = new Dictionary<string, Dictionary<string, double>>();
+                foreach (KeyValuePair<string, Dictionary<string, Object>> entry in Model.prices_data) {
+                    string str = entry.Value["url"].ToString();
+                    string pricesData = JsonSerializer.Serialize(entry.Value["prices"]);
+                    List<Dictionary<string, double>> prices = JsonSerializer.Deserialize<List<Dictionary<string, double>>>(pricesData);
+                    Dictionary<string, double> v = prices[prices.Count - 1];
+                    
+                    Dictionary<string, double> tmp = new Dictionary<string, double>();
+                    foreach(Dictionary<string, double> dict in prices) {
+                        string key = dict.First().Key;
+                        double value = dict.First().Value;
+                        if (tmp.ContainsKey(key)) {
+                            tmp[key] = value;
+                        }
+                        else {
+                            tmp.Add(key, value);
+                        }
+                    }
+                    storePrices.Add(entry.Key, tmp);
+
+                    double price = v.First().Value;
+
+                    <span style="display: inline-block; width: 125px;"><a href="@str" target="_blank">@entry.Key:</a></span>
+                    <span style="display: inline-block;"><a>[@price€]</a></span><br>
+                }
+                string json = JsonSerializer.Serialize(storePrices);
+                Console.WriteLine(json);
+            }
         </dt>
         <dt class = "col-sm-2">
             
@@ -32,3 +65,77 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script type="text/javascript">
+
+    var jsonData = "@json";
+    jsonData = jsonData.replaceAll("&quot;", "\"");
+
+    var data = JSON.parse(jsonData);
+    var table = [['Date']];
+
+    console.log(jsonData);
+    var tmpDates = [];
+    for (var key in data) {
+        for (var date in data[key]) {
+            if (tmpDates.indexOf(date) == -1) {
+                tmpDates.push(date);
+            }
+        }
+    }
+
+    var i = 1;
+    for (var key in data) {
+        table[0].push(key);
+        var j = 1;
+
+        for (var x in tmpDates) {
+            var date = tmpDates[x];
+
+            if (j == table.length) {
+                table.push([]);
+            }
+
+            table[j][0] = date;
+
+            if (data[key][date] == undefined) {
+                table[j][i] = null;
+            }
+            else {
+                table[j][i] = data[key][date];
+            }
+
+            j++;
+        }
+
+        i++;
+    }
+
+    console.log(tmpDates);
+    console.log(table);
+
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+        var data = new google.visualization.arrayToDataTable(table);
+
+        //data.addRows(table);
+
+        var options = {
+            title: 'Prices (€) over time',
+            legend: { position: 'bottom' },
+            hAxis: {
+                title: 'Date'
+            },
+            vAxis: {
+                title: 'Price'
+            }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        
+        chart.draw(data, options);
+    }
+</script>

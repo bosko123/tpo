@@ -53,12 +53,12 @@ namespace web.Controllers
             var token = HttpContext.Session.GetString("token");
             if (token != null) {
 
-                string result = await sandJsonRequestGet(token, "user_items");
-                Dictionary<string, Object> values = JsonSerializer.Deserialize<Dictionary<string, Object>>(result);
+                string result = await sandJsonRequestGetToken(token, "user_items");
                 
-                if (!values.ContainsKey("Error")) {
+                Dictionary<string, Object> values = JsonSerializer.Deserialize<Dictionary<string, Object>>(result);
 
-                    Console.WriteLine(result);
+                if (!values.ContainsKey("Result")/*!values["Result"].Equals("Token is invalid") && !values["Result"].Equals("No products")*/) {
+
                     Dictionary<string, IEnumerable<Product>> json = JsonSerializer.Deserialize<Dictionary<string, IEnumerable<Product>>>(result);
                     ProductsList = json["Products"];
 
@@ -76,9 +76,13 @@ namespace web.Controllers
             return View();
         }
 
-        public IActionResult Products()
+        public async Task<IActionResult> Products()
         {
-            return View();
+            string result = await sandJsonRequestGet("home_items");
+            Dictionary<string, IEnumerable<Product>> json = JsonSerializer.Deserialize<Dictionary<string, IEnumerable<Product>>>(result);
+            ProductsList = json["Products"];
+
+            return View(ProductsList);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -99,7 +103,7 @@ namespace web.Controllers
 
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Login");
 
         }
 
@@ -114,8 +118,6 @@ namespace web.Controllers
 
                 string json = JsonSerializer.Serialize<Dictionary<string, int?>>(data);
                 string result = await sandJsonRequestToken(json, "remove_product", token);
-
-                Console.WriteLine(result);
 
                 return RedirectToAction("Index");
 
@@ -221,7 +223,7 @@ namespace web.Controllers
 
         }
 
-        public async Task<string> sandJsonRequestGet(string token, string type) {
+        public async Task<string> sandJsonRequestGetToken(string token, string type) {
 
             using (var client = new HttpClient())
             {
@@ -232,6 +234,26 @@ namespace web.Controllers
                     //Content = new StringContent(Json, Encoding.UTF8, "application/json")
                 };
                 request.Headers.Add("x-access-token", token);
+
+                // method address would be like api/callUber:SomePort for example
+                var result = await client.SendAsync(request);
+                //result.EnsureSuccessStatusCode();
+                string resultContent = await result.Content.ReadAsStringAsync();
+                return resultContent;
+            }
+
+        }
+
+        public async Task<string> sandJsonRequestGet(string type) {
+
+            using (var client = new HttpClient())
+            {
+                // This would be the like http://www.uber.com
+                var request = new HttpRequestMessage {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri("http://tpo.ski-javornik.si/" + type)
+                    //Content = new StringContent(Json, Encoding.UTF8, "application/json")
+                };
 
                 // method address would be like api/callUber:SomePort for example
                 var result = await client.SendAsync(request);
@@ -272,10 +294,10 @@ namespace web.Controllers
 
                 Dictionary<string, string> values = JsonSerializer.Deserialize<Dictionary<string, string>>(result);
 
-                if (values.ContainsKey("error")) {
+                if (values["Result"].Equals("Missing data") || values["Result"].Equals("User already exists")) {
                     
                     List<string> list = new List<string>();
-                    list.Add(values["error"]);
+                    list.Add(values["Result"]);
 
                     model.password = pass;
                     TempData["data"] = model.ToString();
@@ -317,7 +339,6 @@ namespace web.Controllers
 
             string data = model.ToString();
             string result = await sandJsonRequestToken(data, "add_item", token);
-            Console.WriteLine(result);
 
             return RedirectToAction("Index");
 
@@ -335,10 +356,10 @@ namespace web.Controllers
 
                 Dictionary<string, string> values = JsonSerializer.Deserialize<Dictionary<string, string>>(result);
 
-                if (values.ContainsKey("error")) {
+                if (values["Result"].Equals("User does not exist") || values["Result"].Equals("Wrong password")) {
                     
                     List<string> list = new List<string>();
-                    list.Add(values["error"]);
+                    list.Add(values["Result"]);
 
                     model.password = pass;
                     TempData["data"] = model.ToString();
