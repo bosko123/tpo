@@ -13,19 +13,19 @@
     <h4>@Model.name</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-5">
-            <img src="@Model.image" height="200" />
+        <dt class = "col-sm-3">
+            <img src="@Model.image" style="width: 100%; position: absolute; top: 50%; transform: translateY(-50%)" />
         </dt>
-        <dd class = "col-sm-2">
+        <dd class = "col-sm-8">
             <div id="curve_chart" style="width: 900px; height: 500px"></div>
         </dd>
-        <dt class = "col-sm-10">
+        <dt class = "col-sm-3">
             Trenutna cena: @Model.price€
         </dt>
-        <dt class = "col-sm-2">
+        <dt class = "col-sm-8">
             
         </dt>
-        <dt class = "col-sm-10">
+        <dt class = "col-sm-3">
             <br><a>Web stores:</a><br>
             @{
                 Dictionary<string, Dictionary<string, double>> storePrices = new Dictionary<string, Dictionary<string, double>>();
@@ -57,7 +57,7 @@
                 Console.WriteLine(json);
             }
         </dt>
-        <dt class = "col-sm-2">
+        <dt class = "col-sm-8">
             
         </dt>
     </dl>
