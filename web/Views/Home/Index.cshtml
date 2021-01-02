@@ -31,9 +31,9 @@
             foreach (var product in Model)
             {
                 if (product.condition) {
-                    <tr style="background-color: #FFF9BF;">
+                    <tr style="background-color: #FFF9BF;" style="height: 100px;">
                         <td>
-                            <img src="@product.image" height="50">
+                            <img src="@product.image" style="height: 75px;">
                         </td>
                         <td>
                             <a asp-action="Details" asp-route-id="@product.id">@product.name</a>
@@ -47,9 +47,9 @@
                     </tr>
                 }
                 else {
-                    <tr>
+                    <tr style="height: 100px;">
                         <td>
-                            <img src="@product.image" height="50">
+                            <img src="@product.image" style="height: 75px;">
                         </td>
                         <td>
                             <a asp-action="Details" asp-route-id="@product.id">@product.name</a>
