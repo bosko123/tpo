@@ -8,7 +8,7 @@
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-<table class="table">
+<table class="table" style="text-align: center;">
     <thead>
         <tr>
             <th>
@@ -23,7 +23,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody style="line-height: 75px;">
     
     @{
         var token = HttpContextAccessor.HttpContext.Session.GetString("token");
@@ -31,9 +31,9 @@
             foreach (var product in Model)
             {
                 if (product.condition) {
-                    <tr style="background-color: #FFF9BF;" style="height: 100px;">
-                        <td>
-                            <img src="@product.image" style="height: 75px;">
+                    <tr style="background-color: #FFF9BF;">
+                        <td style="padding: 5px;">
+                            <img src="@product.image" style="width: 75px; height: 75px; object-fit: contain;">
                         </td>
                         <td>
                             <a asp-action="Details" asp-route-id="@product.id">@product.name</a>
@@ -47,9 +47,9 @@
                     </tr>
                 }
                 else {
-                    <tr style="height: 100px;">
-                        <td>
-                            <img src="@product.image" style="height: 75px;">
+                    <tr>
+                        <td style="padding: 5px;">
+                            <img src="@product.image" style="width: 75px; height: 75px; object-fit: contain;">
                         </td>
                         <td>
                             <a asp-action="Details" asp-route-id="@product.id">@product.name</a>

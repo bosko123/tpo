@@ -20,13 +20,13 @@
             </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody style="line-height: 75px;">
 
     @foreach (var product in Model)
     {
         <tr>
-            <td>
-                <img src="@product.image" style="height: 75px;">
+            <td style="padding: 5px;">
+                <img src="@product.image" style="width: 75px; height: 75px; object-fit: contain;">
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@product.id">@product.name</a>
