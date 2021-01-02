@@ -52,6 +52,7 @@
 
                     double price = v.First().Value;
 
+                    HttpContextAccessor.HttpContext.Session.SetString("add", str);
                     <span style="display: inline-block; width: 125px;"><a href="@str" target="_blank">@entry.Key:</a></span>
                     <span style="display: inline-block;"><a>[@price€]</a></span><br>
                 }
@@ -62,6 +63,12 @@
             <br>
             @{
                 var up = HttpContextAccessor.HttpContext.Session.GetInt32("userProducts");
+                using (Html.BeginForm("thresholdSubmit", "Home", FormMethod.Post))
+                {
+                    <div class="form-group">
+                        <button class="btn btn-primary" asp-action="AddProduct">Add</button>
+                    </div>
+                }
                 if (up == 1) {
                     using (Html.BeginForm("thresholdSubmit", "Home", FormMethod.Post))
                     {

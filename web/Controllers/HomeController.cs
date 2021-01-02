@@ -156,7 +156,17 @@ namespace web.Controllers
 
         }
 
-        public IActionResult AddProduct() {
+        public async Task<IActionResult> AddProduct() {
+
+            var url = HttpContext.Session.GetString("add");
+            if (url != null) {
+
+                AddProductModel apm = new AddProductModel();
+                apm.url = url;
+
+                return await addProductSubmit(apm);
+
+            }
 
             var token = HttpContext.Session.GetString("token");
 
@@ -325,15 +335,18 @@ namespace web.Controllers
             SetThreshold threshold = new SetThreshold();
             threshold.id = model.id;
 
+            double lower = double.Parse(model.lowerInput, System.Globalization.CultureInfo.InvariantCulture);
+            double upper = double.Parse(model.upperInput, System.Globalization.CultureInfo.InvariantCulture);
+
             if (model.lowerInput != null) {
 
-                threshold.spodnja = Convert.ToDouble(model.lowerInput);
+                threshold.spodnja = lower;
 
             }
 
             if (model.upperInput != null) {
 
-                threshold.zgornja = Convert.ToDouble(model.upperInput);
+                threshold.zgornja = upper;
 
             }
 
