@@ -1,7 +1,9 @@
 @using System
 @using System.Collections.Generic
-@using System.Text.Json;
-@using System.Text.Json.Serialization;
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @model ProductDetails;
 @{
     ViewData["Title"] = "Details";
@@ -54,11 +56,36 @@
                     <span style="display: inline-block;"><a>[@price€]</a></span><br>
                 }
                 string json = JsonSerializer.Serialize(storePrices);
-                Console.WriteLine(json);
             }
         </dt>
         <dt class = "col-sm-8">
-            
+            <br>
+            @{
+                var up = HttpContextAccessor.HttpContext.Session.GetInt32("userProducts");
+                if (up == 1) {
+                    using (Html.BeginForm("thresholdSubmit", "Home", FormMethod.Post))
+                    {
+                        <h6>Set notification threshold:</h6>
+                        <hr />
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group" style="display: none;">
+                            <label for="ID">ID</label>
+                            @Html.TextBoxFor(model => model.id, new {@class = "form-control"})
+                        </div>
+                        <div class="form-group">
+                            <label for="Lower">Lower</label>
+                            @Html.TextBoxFor(model => model.lowerInput, new {@class = "form-control"})
+                        </div>
+                        <div class="form-group">
+                            <label for="Upper">Upper</label>
+                            @Html.TextBoxFor(model => model.upperInput, new {@class = "form-control"})
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Set</button>
+                        </div>
+                    }
+                }
+            }
         </dt>
     </dl>
 </div>

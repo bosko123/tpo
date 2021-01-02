@@ -30,20 +30,38 @@
         if (token != null && Model != null) {
             foreach (var product in Model)
             {
-                <tr>
-                    <td>
-                        <img src="@product.image" height="50">
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@product.id">@product.name</a>
-                    </td>
-                    <td>
-                        @product.price€
-                    </td>
-                    <td>
-                        <a asp-action="RemoveProduct" asp-route-id="@product.id">Remove</a>
-                    </td>
-                </tr>
+                if (product.condition) {
+                    <tr style="background-color: #FFF9BF;">
+                        <td>
+                            <img src="@product.image" height="50">
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@product.id">@product.name</a>
+                        </td>
+                        <td>
+                            @product.price€
+                        </td>
+                        <td>
+                            <a asp-action="RemoveProduct" asp-route-id="@product.id" asp->Remove</a>
+                        </td>
+                    </tr>
+                }
+                else {
+                    <tr>
+                        <td>
+                            <img src="@product.image" height="50">
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@product.id">@product.name</a>
+                        </td>
+                        <td>
+                            @product.price€
+                        </td>
+                        <td>
+                            <a asp-action="RemoveProduct" asp-route-id="@product.id">Remove</a>
+                        </td>
+                    </tr>
+                }
             }
         }
     }

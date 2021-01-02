@@ -38,6 +38,7 @@ namespace web.Controllers
 
         public async Task<IActionResult> Index()
         {
+            HttpContext.Session.SetInt32("userProducts", 1);
             ViewBag.productsList = ProductsList;
 
             if (TempData["data"] != null) {
@@ -78,6 +79,7 @@ namespace web.Controllers
 
         public async Task<IActionResult> Products()
         {
+            HttpContext.Session.SetInt32("userProducts", 0);
             string result = await sandJsonRequestGet("home_items");
             Dictionary<string, IEnumerable<Product>> json = JsonSerializer.Deserialize<Dictionary<string, IEnumerable<Product>>>(result);
             ProductsList = json["Products"];
@@ -96,8 +98,19 @@ namespace web.Controllers
 
                 string json = JsonSerializer.Serialize<Dictionary<string, int?>>(data);
                 string result = await sandJsonRequestToken(json, "product", token);
-
                 ProductDetails productDetails = JsonSerializer.Deserialize<ProductDetails>(result);
+                
+                if (productDetails.lower != null) {
+
+                    productDetails.lowerInput = productDetails.lower.ToString();
+
+                }
+
+                if (productDetails.upper != null) {
+
+                    productDetails.upperInput = productDetails.upper.ToString();
+
+                }
 
                 return View(productDetails);
 
@@ -303,6 +316,41 @@ namespace web.Controllers
             }
 
             return RedirectToAction("Login");
+
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> thresholdSubmit(ProductDetails model) {
+
+            SetThreshold threshold = new SetThreshold();
+            threshold.id = model.id;
+
+            if (model.lowerInput != null) {
+
+                threshold.spodnja = Convert.ToDouble(model.lowerInput);
+
+            }
+
+            if (model.upperInput != null) {
+
+                threshold.zgornja = Convert.ToDouble(model.upperInput);
+
+            }
+
+            var token = HttpContext.Session.GetString("token");
+            if (token == null) {
+
+                return RedirectToAction("Login");
+
+            }
+
+            string json = threshold.ToString();
+            string result = await sandJsonRequestToken(json, "conditions_product", token);
+
+            Console.WriteLine(json);
+            Console.WriteLine(result);
+
+            return RedirectToAction("Details", new {id = model.id});
 
         }
 

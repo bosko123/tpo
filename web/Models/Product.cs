@@ -9,6 +9,9 @@ namespace web.Models {
         public string image { get; set; }
         public string name { get; set; }
         public double price { get; set; }
+        public bool condition { get; set; }
+        public object lower { get; set; }
+        public object upper { get; set; }
 
         public Product() {
 
