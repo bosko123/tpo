@@ -68,8 +68,9 @@ namespace web.Controllers
                 return View(ProductsList);
 
             }
-
-            return View();
+            
+            return RedirectToAction("Products");
+            
         }
 
         public IActionResult Privacy()
