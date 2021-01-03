@@ -165,6 +165,8 @@ namespace web.Controllers
                 AddProductModel apm = new AddProductModel();
                 apm.url = url;
 
+                HttpContext.Session.Remove("add");
+
                 return await addProductSubmit(apm);
 
             }
