@@ -338,17 +338,16 @@ namespace web.Controllers
             SetThreshold threshold = new SetThreshold();
             threshold.id = model.id;
 
-            double lower = double.Parse(model.lowerInput, System.Globalization.CultureInfo.InvariantCulture);
-            double upper = double.Parse(model.upperInput, System.Globalization.CultureInfo.InvariantCulture);
-
             if (model.lowerInput != null) {
 
+                double lower = double.Parse(model.lowerInput, System.Globalization.CultureInfo.InvariantCulture);
                 threshold.spodnja = lower;
 
             }
 
             if (model.upperInput != null) {
-
+                
+                double upper = double.Parse(model.upperInput, System.Globalization.CultureInfo.InvariantCulture);
                 threshold.zgornja = upper;
 
             }
